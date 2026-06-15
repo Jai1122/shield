@@ -21,7 +21,8 @@ gradle build          # compiles, tests, and produces the fat JAR
 # → build/libs/aireview-<version>-all.jar
 ```
 
-Requires JDK 17+. Built/tested with Gradle 9.
+Requires JDK 21+ (the build pins a Java 21 toolchain; the fat JAR is Java 21 bytecode). Built and
+tested with Gradle 9. If a JDK 21 isn't installed, the foojay toolchain resolver auto-downloads one.
 
 ## Install (per machine)
 

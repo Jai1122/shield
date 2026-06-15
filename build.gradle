@@ -10,7 +10,7 @@ def appMainClass = 'com.platform.tools.aireview.Main'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 

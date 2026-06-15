@@ -26,7 +26,8 @@ gradle test             # tests only
 gradle shadowJar        # fat JAR only
 ```
 
-- JDK **17** (toolchain pinned). Gradle **9** with the `com.gradleup.shadow` plugin (the old
+- JDK **21** (toolchain pinned; foojay resolver auto-provisions it if absent). Gradle **9** with
+  the `com.gradleup.shadow` plugin (the old
   `com.github.johnrengelman.shadow` + `application` plugin combo breaks on Gradle 9 via the removed
   `mainClassName`; do not reintroduce the `application` plugin).
 - Keep dependencies minimal: only SnakeYAML (config) and Jackson (JSON). **HTTP uses the JDK

@@ -24,9 +24,14 @@ uninstall() {
 
 [ "${1:-}" = "--uninstall" ] && uninstall "${2:-}"
 
-# 1. JVM check
+# 1. JVM check — the fat JAR is Java 21 bytecode, so require Java 21+.
 if ! command -v java >/dev/null 2>&1; then
-  echo "ERROR: Java 17+ is required but 'java' was not found on PATH." >&2
+  echo "ERROR: Java 21+ is required but 'java' was not found on PATH." >&2
+  exit 1
+fi
+JV=$(java -version 2>&1 | head -1 | sed -E 's/.*version "([0-9]+).*/\1/')
+if [ -z "$JV" ] || [ "$JV" -lt 21 ] 2>/dev/null; then
+  echo "ERROR: Java 21+ is required (detected: ${JV:-unknown}). Install a JDK 21+ and retry." >&2
   exit 1
 fi
 

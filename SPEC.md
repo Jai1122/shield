@@ -8,7 +8,7 @@
 | Owner | Jayapal |
 | Date | 2026-06-15 |
 | Audience | Platform engineers, pilot-team developers |
-| Target stack | Java 17+ Spring Boot services, Gradle (Groovy DSL) |
+| Target stack | Java Spring Boot services; CLI builds/runs on Java 21+, Gradle (Groovy DSL) |
 | LLM | MiniMax (configurable endpoint + model) |
 
 > **One-line summary:** A client-side Git `pre-push` hook that, on every push, sends the
@@ -677,7 +677,7 @@ Summary: Solid change. Two concerns around transaction scope and a possible N+1.
 
 - Single module producing a **fat/shadow JAR** (`com.github.johnrengelman.shadow` or Gradle
   `application` + manifest). Output: `aireview-<version>-all.jar`.
-- Java 17 toolchain (matches Spring Boot 3 services).
+- Java 21 toolchain (foojay resolver auto-provisions a JDK 21 if absent).
 - Reproducible version from a `version` property; `--version` flag prints it.
 
 ### 15.2 Artifact hosting
@@ -887,7 +887,7 @@ group = 'com.platform.tools'
 version = '0.1.0'
 
 java {
-    toolchain { languageVersion = JavaLanguageVersion.of(17) }
+    toolchain { languageVersion = JavaLanguageVersion.of(21) }
 }
 
 application {
