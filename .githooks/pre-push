@@ -1,0 +1,21 @@
+#!/bin/sh
+# .githooks/pre-push  — thin, advisory. NEVER blocks a push.
+#
+# Git passes:
+#   argv: <remoteName> <remoteURL>
+#   stdin (one line per ref): <localRef> <localSHA> <remoteRef> <remoteSHA>
+#
+# All review logic and guardrails live in the CLI. This hook only forwards input
+# and hard-guarantees exit 0 so a push is never blocked by the reviewer.
+set -u
+
+LAUNCHER="${AIREVIEW_BIN:-$HOME/.local/bin/aireview}"
+
+if [ ! -x "$LAUNCHER" ]; then
+  echo "aireview: not installed — skipping review (see install docs)" >&2
+  exit 0
+fi
+
+# Forward remote args + stdin verbatim. Never let a failure here block the push.
+"$LAUNCHER" pre-push "$@" || true
+exit 0

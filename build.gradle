@@ -1,0 +1,61 @@
+plugins {
+    id 'java'
+    id 'com.gradleup.shadow' version '8.3.5'   // Gradle 9-compatible fork of shadow
+}
+
+group = 'com.platform.tools'
+// version comes from gradle.properties
+
+def appMainClass = 'com.platform.tools.aireview.Main'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+    // TODO: add internal Nexus/Artifactory for publishing the fat JAR
+}
+
+dependencies {
+    // Keep deps minimal; HTTP uses the JDK built-in java.net.http.HttpClient.
+    implementation 'org.yaml:snakeyaml:2.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.1'
+
+    testImplementation platform('org.junit:junit-bom:5.10.2')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+// Bake the build version into a resource so --version is accurate.
+tasks.register('writeVersion') {
+    def outDir = layout.buildDirectory.dir('generated-resources')
+    outputs.dir(outDir)
+    doLast {
+        def f = outDir.get().file('aireview-version.txt').asFile
+        f.parentFile.mkdirs()
+        f.text = project.version.toString()
+    }
+}
+
+sourceSets.main.resources.srcDir(layout.buildDirectory.dir('generated-resources'))
+tasks.named('processResources') { dependsOn 'writeVersion' }
+
+shadowJar {
+    archiveBaseName = 'aireview'
+    archiveClassifier = 'all'
+    archiveVersion = project.version
+    manifest {
+        attributes 'Main-Class': appMainClass
+    }
+    // Produces: build/libs/aireview-<version>-all.jar
+}
+
+// Make `gradle build` also produce the fat JAR.
+tasks.named('build') { dependsOn 'shadowJar' }
