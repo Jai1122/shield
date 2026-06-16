@@ -9,7 +9,9 @@ endpoint and prints an **advisory** review to your terminal. It **never blocks a
 ## What it does / doesn't do
 
 - ✅ Judgment-level review: design, Spring idioms, transactions, logic/edge cases, intent match,
-  clarity, and duplication **visible in the diff** (+ a cheap symbol-grep heuristic).
+  clarity, and duplication **visible in the diff** (+ a cheap symbol-grep heuristic). The full
+  current body of each changed file is sent as read-only context so the model judges the diff in
+  context rather than through the diff's keyhole (`review.relatedCode.*`).
 - ❌ Does **not** re-check lint/tests/security (handled by your existing tooling).
 - ❌ Does **not** do repo-wide / cross-repo duplicate detection yet (needs the server-side index —
   see SPEC §21).
@@ -89,6 +91,7 @@ The failure-mode matrix is in SPEC §14, and there are tests asserting exit 0 ac
 
 ```
 SPEC.md                         full specification
+ROADMAP.md                      deferred work (server-side phase, L2/L3 context, multi-repo)
 build.gradle / settings.gradle  Gradle (Groovy) build → fat JAR via gradleup shadow
 .githooks/pre-push              thin tracked hook (forwards to the CLI)
 install.sh                      per-machine installer + config scaffold

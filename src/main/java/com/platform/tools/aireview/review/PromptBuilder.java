@@ -30,8 +30,10 @@ public final class PromptBuilder {
             5. Clarity & maintainability of the changed code only.
 
             RULES:
-            - Review ONLY the changed lines and their immediate context. Do not invent code you
-              cannot see.
+            - Review ONLY the lines changed in the DIFF. The "CHANGED FILES (full content)" section
+              is read-only CONTEXT so you can see the whole file around each change — use it to judge
+              the diff, but do NOT raise findings about unchanged lines there.
+            - Do not invent code you cannot see.
             - Prefer few high-confidence findings over many speculative ones; false positives
               erode trust.
             - If you have no material findings, return an empty findings array.
@@ -53,7 +55,8 @@ public final class PromptBuilder {
             """.formatted(blankToNone(agentsMd), blankToNone(bestPractices));
     }
 
-    public static String buildUser(String intent, List<String> grepHits, String diff) {
+    public static String buildUser(String intent, List<String> grepHits,
+                                   String relatedCode, String diff) {
         String hits = (grepHits == null || grepHits.isEmpty())
                 ? "none"
                 : String.join("\n", grepHits);
@@ -64,9 +67,13 @@ public final class PromptBuilder {
             POSSIBLY-RELATED EXISTING CODE (heuristic, may be irrelevant):
             %s
 
+            CHANGED FILES — full current content (read-only CONTEXT; review ONLY what the DIFF changes):
+            %s
+
             DIFF (unified):
             %s
-            """.formatted(blankToNone(intent), hits, diff == null ? "" : diff);
+            """.formatted(blankToNone(intent), hits,
+                          blankToNone(relatedCode), diff == null ? "" : diff);
     }
 
     private static String blankToNone(String s) {

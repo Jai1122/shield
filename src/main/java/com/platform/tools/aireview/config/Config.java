@@ -52,11 +52,20 @@ public final class Config {
         public int diffContextLines = 3;
         public int maxRubricChars = 24000;
         public final SymbolGrep symbolGrep = new SymbolGrep();
+        public final RelatedCode relatedCode = new RelatedCode();
     }
 
     public static final class SymbolGrep {
         public boolean enabled = true;
         public int maxGrepHits = 20;
+    }
+
+    /** L1 "related code": send full post-change bodies of changed files as review context. */
+    public static final class RelatedCode {
+        public boolean enabled = true;
+        public int maxFiles = 20;          // cap number of bodies included
+        public int maxFileChars = 16000;   // per-file cap; larger files degrade to signatures-only
+        public int maxTotalChars = 60000;  // total budget across all bodies
     }
 
     public static final class Guardrails {

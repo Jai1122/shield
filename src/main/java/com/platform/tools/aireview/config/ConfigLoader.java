@@ -87,6 +87,13 @@ public final class ConfigLoader {
                 c.review.symbolGrep.enabled = asBool(sg.get("enabled"), c.review.symbolGrep.enabled);
                 c.review.symbolGrep.maxGrepHits = asInt(sg.get("maxGrepHits"), c.review.symbolGrep.maxGrepHits);
             }
+            Map<String, Object> rc = asMap(rv.get("relatedCode"));
+            if (rc != null) {
+                c.review.relatedCode.enabled = asBool(rc.get("enabled"), c.review.relatedCode.enabled);
+                c.review.relatedCode.maxFiles = asInt(rc.get("maxFiles"), c.review.relatedCode.maxFiles);
+                c.review.relatedCode.maxFileChars = asInt(rc.get("maxFileChars"), c.review.relatedCode.maxFileChars);
+                c.review.relatedCode.maxTotalChars = asInt(rc.get("maxTotalChars"), c.review.relatedCode.maxTotalChars);
+            }
         }
 
         Map<String, Object> gr = asMap(m.get("guardrails"));

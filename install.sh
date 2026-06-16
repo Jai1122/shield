@@ -91,6 +91,11 @@ repositories:
     enabled: true
 review:
   trunkBranch: "main"
+  relatedCode:
+    enabled: true        # send full bodies of changed files as read-only review context
+    maxFiles: 20
+    maxFileChars: 16000  # larger files degrade to a signatures-only skeleton
+    maxTotalChars: 60000 # total context budget across all included bodies
 guardrails:
   totalTimeBudgetMs: 22000
   cache:

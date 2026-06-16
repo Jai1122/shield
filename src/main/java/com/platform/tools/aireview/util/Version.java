@@ -17,5 +17,5 @@ public final class Version {
     }
 
     /** Prompt template version — participates in the cache key. Bump on prompt changes. */
-    public static final String PROMPT_TEMPLATE_VERSION = "p1";
+    public static final String PROMPT_TEMPLATE_VERSION = "p2";
 }

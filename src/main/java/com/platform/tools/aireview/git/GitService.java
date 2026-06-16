@@ -135,6 +135,32 @@ public final class GitService {
         return r.ok() ? r.stdout() : "";
     }
 
+    /**
+     * Paths changed in base..tip, restricted to the given globs, excluding deletions
+     * ({@code --diff-filter=d}) since deleted files have no post-change body. Uses the same
+     * {@code :(glob)} pathspec magic as {@link #diff} so {@code **} matches root-level files.
+     * For renames/copies this yields the new path.
+     */
+    public List<String> changedFiles(String base, String tip, List<String> globs) {
+        List<String> args = new ArrayList<>(List.of(
+                "diff", "--name-only", "--diff-filter=d", "--no-color", base + ".." + tip, "--"));
+        for (String g : globs) args.add(":(glob)" + g);
+        Result r = run(args.toArray(new String[0]));
+        List<String> out = new ArrayList<>();
+        if (!r.ok()) return out;
+        for (String l : r.stdout().split("\n")) if (!l.isBlank()) out.add(l.trim());
+        return out;
+    }
+
+    /**
+     * Full content of {@code path} as it exists at {@code commit} (the post-change version when
+     * {@code commit} is the tip). Returns null if the blob can't be read (e.g. binary, missing).
+     */
+    public String fileAtCommit(String commit, String path) {
+        Result r = run("show", "--no-color", commit + ":" + path);
+        return r.ok() ? r.stdout() : null;
+    }
+
     /** numstat lines: "<added>\t<deleted>\t<path>". */
     public String numstat(String base, String tip) {
         Result r = run("diff", "--numstat", "--no-color", base + ".." + tip);

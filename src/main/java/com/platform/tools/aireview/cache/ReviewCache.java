@@ -26,8 +26,8 @@ public final class ReviewCache {
     }
 
     /** Cache key per SPEC §10.4. */
-    public String key(String diff, String intent, String rubric, String model) {
-        return Hashing.sha256(diff, intent, rubric, model, Version.PROMPT_TEMPLATE_VERSION);
+    public String key(String diff, String relatedCode, String intent, String rubric, String model) {
+        return Hashing.sha256(diff, relatedCode, intent, rubric, model, Version.PROMPT_TEMPLATE_VERSION);
     }
 
     /** Stored shape: summary + findings only (the durable part of a result). */

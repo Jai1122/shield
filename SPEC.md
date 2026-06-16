@@ -340,6 +340,11 @@ review:
   symbolGrep:
     enabled: true
     maxGrepHits: 20
+  relatedCode:               # L1 "related code": full post-change bodies of changed files as context
+    enabled: true
+    maxFiles: 20             # cap number of file bodies included
+    maxFileChars: 16000      # per-file cap; larger files degrade to a signatures-only skeleton
+    maxTotalChars: 60000     # total context budget across all included bodies
 
 guardrails:
   totalTimeBudgetMs: 22000   # hard wall-clock ceiling for the whole CLI
@@ -506,6 +511,9 @@ COMMIT MESSAGES (intent):
 POSSIBLY-RELATED EXISTING CODE (heuristic, may be irrelevant):
 <symbol-grep hits or "none">
 
+CHANGED FILES — full current content (read-only CONTEXT; review ONLY what the DIFF changes):
+<L1 related code: redacted, budget-capped, oversized files degraded to signatures-only>
+
 DIFF (unified):
 <filtered, redacted diff>
 ```
@@ -514,6 +522,13 @@ DIFF (unified):
 
 - The duplication focus is bounded to *visible* context — consistent with N1. The prompt MUST NOT
   imply repo-wide duplicate detection.
+- **L1 "related code"** (the `CHANGED FILES` block) gives the model the whole post-change body of
+  each changed file so it can judge the diff in context, rather than through the diff's keyhole. It
+  is explicitly labelled read-only: the model MUST flag only diff-changed lines, never unchanged
+  lines in the context (guards against false positives — see R2). It participates in the cache key.
+  Bodies are redacted before egress; collection is fail-soft (an unreadable body is skipped) and
+  budget-driven (per-file / total caps, with overflow degrading to a signatures-only skeleton).
+  Neighbour-file (L2) and repo-wide (L3) context are deferred — see ROADMAP.
 - The "few high-confidence findings" instruction is deliberate: benchmark data shows false
   positives are the primary reason teams abandon AI reviewers.
 

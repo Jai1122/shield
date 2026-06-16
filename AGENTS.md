@@ -7,8 +7,8 @@ advisory AI code-review tool, so changes here should hold to the same bar it enf
 
 `aireview` is a client-side Git `pre-push` hook + a Java CLI (fat JAR). On `git push` it sends the
 pushed diff plus repo context to a **self-hosted, OpenAI-compatible (vLLM) MiniMax** endpoint and
-prints an **advisory** review. Full design is in [`SPEC.md`](SPEC.md). This is an MVP; the roadmap
-to a server-side version is in SPEC §21.
+prints an **advisory** review. Full design is in [`SPEC.md`](SPEC.md). This is an MVP; deferred work
+(server-side phase, L2/L3 review context, multi-repo rollout) is tracked in [`ROADMAP.md`](ROADMAP.md).
 
 ## Golden invariant (do not violate)
 
@@ -65,7 +65,9 @@ aireview commit <id> --jira "PROJ-1: ..."   # review a specific commit
   files — see the comment in `GitService.diff`, this was a real bug).
 - `llm/` — `LlmClient` interface + `MiniMaxClient` (OpenAI-compatible wire format per SPEC §12.6;
   bearer/basic/custom auth; JSON-mode-with-fallback; bounded retry on 429/5xx/timeout).
-- `review/` — `ReviewService` (orchestration), `PromptBuilder`, `ResponseParser` (defensive JSON
+- `review/` — `ReviewService` (orchestration), `PromptBuilder`, `RelatedCodeCollector` (L1 "related
+  code": full post-change bodies of changed files as read-only context — budget-capped, redacted,
+  fail-soft, oversized files degrade to signatures-only), `ResponseParser` (defensive JSON
   extraction — balances braces, ignores string contents, recovers from prose/fences), `Finding`,
   `ReviewResult`.
 - `output/` — `Renderer` writes to **stderr** (never stdout; never affects the push).
